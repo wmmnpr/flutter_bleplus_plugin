@@ -12,25 +12,36 @@ import CoreLocation
 
 
 class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelegate {
-    func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
-    
-    }
-    
-    
+
     var peripheralManager : CBPeripheralManager!
-    var txCharacteristic: CBMutableCharacteristic?
-    var rxCharacteristic: CBMutableCharacteristic?
+    var activeServices: [CBMutableService]
     
     override init() {
+        self.activeServices = []
         super.init()
         self.peripheralManager = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionShowPowerAlertKey : true])
-       
+    }
+    
+    func updateValue(svcUuid: String, charUuid: String, data: FlutterStandardTypedData) throws {
+        let targetUuid = CBUUID(string: svcUuid)
+        if let foundService = activeServices.first(where: { $0.uuid.isEqual(targetUuid) }) {
+            let targetCharUuid = CBUUID(string: charUuid)
+            if let foundChar = foundService.characteristics?.first(where: { $0.uuid.isEqual(targetCharUuid) }){
+                let mutableChar = foundChar as! CBMutableCharacteristic
+                let rc = peripheralManager.updateValue(data.data, for: mutableChar, onSubscribedCentrals: nil)
+                print("return code update= \(rc) ")
+            }
+        }
+    }
+    
+    func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
+    
     }
     
     func getDeviceName() -> String {
         return UIDevice.current.name
     }
-    
+
     func startAdvertising(peripheral: BLEPeripheral) throws {
         var dataToBeAdvertised: [String: Any]! = [:]
         dataToBeAdvertised[CBAdvertisementDataServiceUUIDsKey] = [CBUUID(string: peripheral.uuid)]
@@ -51,6 +62,7 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
                 let newCharacteristic = CBMutableCharacteristic(type: CBUUID(string: charEntry.uuid), properties: properties, value: nil, permissions: [.readable, .writeable])
                 service.characteristics?.append(newCharacteristic)
             }
+            activeServices.append(service)
             peripheralManager.add(service)
         }
         

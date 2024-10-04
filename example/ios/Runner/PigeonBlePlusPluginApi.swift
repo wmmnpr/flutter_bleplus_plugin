@@ -155,7 +155,7 @@ struct BLECharacteristic {
   }
 }
 
-private class BLEPeripheralApiPigeonCodecReader: FlutterStandardReader {
+private class PigeonBlePlusPluginApiPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 129:
@@ -170,7 +170,7 @@ private class BLEPeripheralApiPigeonCodecReader: FlutterStandardReader {
   }
 }
 
-private class BLEPeripheralApiPigeonCodecWriter: FlutterStandardWriter {
+private class PigeonBlePlusPluginApiPigeonCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
     if let value = value as? BLEService {
       super.writeByte(129)
@@ -187,29 +187,30 @@ private class BLEPeripheralApiPigeonCodecWriter: FlutterStandardWriter {
   }
 }
 
-private class BLEPeripheralApiPigeonCodecReaderWriter: FlutterStandardReaderWriter {
+private class PigeonBlePlusPluginApiPigeonCodecReaderWriter: FlutterStandardReaderWriter {
   override func reader(with data: Data) -> FlutterStandardReader {
-    return BLEPeripheralApiPigeonCodecReader(data: data)
+    return PigeonBlePlusPluginApiPigeonCodecReader(data: data)
   }
 
   override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return BLEPeripheralApiPigeonCodecWriter(data: data)
+    return PigeonBlePlusPluginApiPigeonCodecWriter(data: data)
   }
 }
 
-class BLEPeripheralApiPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = BLEPeripheralApiPigeonCodec(readerWriter: BLEPeripheralApiPigeonCodecReaderWriter())
+class PigeonBlePlusPluginApiPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
+  static let shared = PigeonBlePlusPluginApiPigeonCodec(readerWriter: PigeonBlePlusPluginApiPigeonCodecReaderWriter())
 }
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol BLEPeripheralApi {
   func startAdvertising(peripheral: BLEPeripheral) throws
+  func updateValue(svcUuid: String, charUuid: String, data: FlutterStandardTypedData) throws
   func stopAdvertising() throws
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class BLEPeripheralApiSetup {
-  static var codec: FlutterStandardMessageCodec { BLEPeripheralApiPigeonCodec.shared }
+  static var codec: FlutterStandardMessageCodec { PigeonBlePlusPluginApiPigeonCodec.shared }
   /// Sets up an instance of `BLEPeripheralApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: BLEPeripheralApi?, messageChannelSuffix: String = "") {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
@@ -227,6 +228,23 @@ class BLEPeripheralApiSetup {
       }
     } else {
       startAdvertisingChannel.setMessageHandler(nil)
+    }
+    let updateValueChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_bleplus_plugin.BLEPeripheralApi.updateValue\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      updateValueChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let svcUuidArg = args[0] as! String
+        let charUuidArg = args[1] as! String
+        let dataArg = args[2] as! FlutterStandardTypedData
+        do {
+          try api.updateValue(svcUuid: svcUuidArg, charUuid: charUuidArg, data: dataArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      updateValueChannel.setMessageHandler(nil)
     }
     let stopAdvertisingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_bleplus_plugin.BLEPeripheralApi.stopAdvertising\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
