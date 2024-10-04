@@ -48,7 +48,8 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
         dataToBeAdvertised[CBAdvertisementDataLocalNameKey] = peripheral.name
         peripheralManager.startAdvertising(dataToBeAdvertised)
         peripheral.services.forEach {serviceEntry in
-            let newService = CBMutableService(type: CBUUID(string: serviceEntry.uuid), primary: true)
+            let isPrimary = serviceEntry.isPrimary ?? false
+            let newService = CBMutableService(type: CBUUID(string: serviceEntry.uuid), primary: isPrimary)
             newService.characteristics = []
             serviceEntry.characteristics.forEach { charEntry in
                 let canRead = charEntry.isReadable ?? true

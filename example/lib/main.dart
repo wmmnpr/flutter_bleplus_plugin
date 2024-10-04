@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
     ];
     BLEService service = BLEService(
         uuid: 'ce061801-43e5-11e4-916c-0800200c9a66',
-        characteristics: characteristics);
+        characteristics: characteristics, isPrimary: true);
     List<BLEService> services = [service];
     BLEPeripheral peripheral = BLEPeripheral(
         name: 'PM Test',

@@ -26,13 +26,15 @@ import 'package:pigeon/pigeon.dart';
 class BLEService {
   String uuid; // UUID of the BLE service
   List<BLECharacteristic> characteristics;
-  BLEService(this.uuid, this.characteristics);
+  bool? isPrimary;
+  BLEService(this.uuid, this.characteristics, this.isPrimary);
 }
 
 class BLEPeripheral {
   String name;
   String uuid;
   List<BLEService> services;
+
   BLEPeripheral(this.name, this.uuid, this.services);
 }
 
@@ -44,7 +46,6 @@ class BLECharacteristic {
   bool? isNotifiable; // Is this characteristic notifiable?
 
   BLECharacteristic(this.uuid);
-
 }
 
 @HostApi()

@@ -19,16 +19,20 @@ class BLEService {
   BLEService({
     required this.uuid,
     required this.characteristics,
+    this.isPrimary,
   });
 
   String uuid;
 
   List<BLECharacteristic> characteristics;
 
+  bool? isPrimary;
+
   Object encode() {
     return <Object?>[
       uuid,
       characteristics,
+      isPrimary,
     ];
   }
 
@@ -37,6 +41,7 @@ class BLEService {
     return BLEService(
       uuid: result[0]! as String,
       characteristics: (result[1] as List<Object?>?)!.cast<BLECharacteristic>(),
+      isPrimary: result[2] as bool?,
     );
   }
 }

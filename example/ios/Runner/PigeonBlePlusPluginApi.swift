@@ -68,6 +68,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 struct BLEService {
   var uuid: String
   var characteristics: [BLECharacteristic]
+  var isPrimary: Bool? = nil
 
 
 
@@ -75,16 +76,19 @@ struct BLEService {
   static func fromList(_ pigeonVar_list: [Any?]) -> BLEService? {
     let uuid = pigeonVar_list[0] as! String
     let characteristics = pigeonVar_list[1] as! [BLECharacteristic]
+    let isPrimary: Bool? = nilOrValue(pigeonVar_list[2])
 
     return BLEService(
       uuid: uuid,
-      characteristics: characteristics
+      characteristics: characteristics,
+      isPrimary: isPrimary
     )
   }
   func toList() -> [Any?] {
     return [
       uuid,
       characteristics,
+      isPrimary,
     ]
   }
 }
