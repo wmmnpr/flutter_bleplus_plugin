@@ -14,17 +14,17 @@ import CoreLocation
 class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelegate {
 
     var peripheralManager : CBPeripheralManager!
-    var activeServices: [CBMutableService]
+    var advertisedServices: [CBMutableService]
     
     override init() {
-        self.activeServices = []
+        self.advertisedServices = []
         super.init()
         self.peripheralManager = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionShowPowerAlertKey : true])
     }
     
     func updateValue(svcUuid: String, charUuid: String, data: FlutterStandardTypedData) throws {
         let targetUuid = CBUUID(string: svcUuid)
-        if let foundService = activeServices.first(where: { $0.uuid.isEqual(targetUuid) }) {
+        if let foundService = advertisedServices.first(where: { $0.uuid.isEqual(targetUuid) }) {
             let targetCharUuid = CBUUID(string: charUuid)
             if let foundChar = foundService.characteristics?.first(where: { $0.uuid.isEqual(targetCharUuid) }){
                 let mutableChar = foundChar as! CBMutableCharacteristic
@@ -48,8 +48,8 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
         dataToBeAdvertised[CBAdvertisementDataLocalNameKey] = peripheral.name
         peripheralManager.startAdvertising(dataToBeAdvertised)
         peripheral.services.forEach {serviceEntry in
-            let service = CBMutableService(type: CBUUID(string: serviceEntry.uuid), primary: true)
-            service.characteristics = []
+            let newService = CBMutableService(type: CBUUID(string: serviceEntry.uuid), primary: true)
+            newService.characteristics = []
             serviceEntry.characteristics.forEach { charEntry in
                 let canRead = charEntry.isReadable ?? true
                 let canWrite = charEntry.isWritable ?? true
@@ -60,10 +60,10 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
                     canNotify ? .notify : []
                 ]
                 let newCharacteristic = CBMutableCharacteristic(type: CBUUID(string: charEntry.uuid), properties: properties, value: nil, permissions: [.readable, .writeable])
-                service.characteristics?.append(newCharacteristic)
+                newService.characteristics?.append(newCharacteristic)
             }
-            activeServices.append(service)
-            peripheralManager.add(service)
+            advertisedServices.append(newService)
+            peripheralManager.add(newService)
         }
         
     }
