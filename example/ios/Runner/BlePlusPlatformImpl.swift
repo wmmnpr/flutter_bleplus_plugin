@@ -22,16 +22,16 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
         self.peripheralManager = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionShowPowerAlertKey : true])
     }
     
-    func updateValue(svcUuid: String, charUuid: String, data: FlutterStandardTypedData) throws {
+    func updateValue(svcUuid: String, charUuid: String, data: FlutterStandardTypedData) throws -> Bool  {
         let targetUuid = CBUUID(string: svcUuid)
         if let foundService = advertisedServices.first(where: { $0.uuid.isEqual(targetUuid) }) {
             let targetCharUuid = CBUUID(string: charUuid)
             if let foundChar = foundService.characteristics?.first(where: { $0.uuid.isEqual(targetCharUuid) }){
                 let mutableChar = foundChar as! CBMutableCharacteristic
-                let rc = peripheralManager.updateValue(data.data, for: mutableChar, onSubscribedCentrals: nil)
-                print("return code update= \(rc) ")
+                return peripheralManager.updateValue(data.data, for: mutableChar, onSubscribedCentrals: nil)
             }
         }
+        return false;
     }
     
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {

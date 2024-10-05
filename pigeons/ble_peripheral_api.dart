@@ -53,7 +53,7 @@ abstract class BLEPeripheralApi {
   // Starts advertising the BLE peripheral
   void startAdvertising(BLEPeripheral peripheral);
 
-  void updateValue(String svcUuid, String charUuid, Uint8List data);
+  bool updateValue(String svcUuid, String charUuid, Uint8List data);
 
   // Stops advertising the BLE peripheral
   void stopAdvertising();

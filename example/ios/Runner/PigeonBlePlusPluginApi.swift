@@ -208,7 +208,7 @@ class PigeonBlePlusPluginApiPigeonCodec: FlutterStandardMessageCodec, @unchecked
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol BLEPeripheralApi {
   func startAdvertising(peripheral: BLEPeripheral) throws
-  func updateValue(svcUuid: String, charUuid: String, data: FlutterStandardTypedData) throws
+  func updateValue(svcUuid: String, charUuid: String, data: FlutterStandardTypedData) throws -> Bool
   func stopAdvertising() throws
 }
 
@@ -241,8 +241,8 @@ class BLEPeripheralApiSetup {
         let charUuidArg = args[1] as! String
         let dataArg = args[2] as! FlutterStandardTypedData
         do {
-          try api.updateValue(svcUuid: svcUuidArg, charUuid: charUuidArg, data: dataArg)
-          reply(wrapResult(nil))
+          let result = try api.updateValue(svcUuid: svcUuidArg, charUuid: charUuidArg, data: dataArg)
+          reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
         }
