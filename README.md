@@ -14,5 +14,15 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 
-flutter pub run pigeon --input pigeons/ble_peripheral_api.dart  --swift_out ios/Runner/BLEPeripheralApi.swift --dart_out lib/generated/ble_peripheral_api.dart 
+# To fix Xcode project also run:
+flutter pub get
+flutter clean
+flutter pub get
+
+cd example
+flutter build ios
+
+cd ios/     # or 'cd macos/'
+pod install
+
 

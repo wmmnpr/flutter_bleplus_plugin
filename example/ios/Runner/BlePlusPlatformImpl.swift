@@ -9,6 +9,14 @@ import Foundation
 import CoreBluetooth
 import CoreLocation
 
+#if os(iOS)
+  import Flutter
+#elseif os(macOS)
+  import FlutterMacOS
+#else
+  #error("Unsupported platform.")
+#endif
+
 
 
 class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelegate {
@@ -16,11 +24,12 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
     var peripheralManager : CBPeripheralManager!
     var advertisedServices: [CBMutableService]
     
-    override init() {
+    override init(stateChangedHandler: StateChangedHandler) {
         self.advertisedServices = []
         super.init()
         self.peripheralManager = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionShowPowerAlertKey : true])
     }
+    
     
     func updateValue(svcUuid: String, charUuid: String, data: FlutterStandardTypedData) throws -> Bool  {
         let targetUuid = CBUUID(string: svcUuid)
@@ -39,7 +48,7 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
     }
     
     func getDeviceName() -> String {
-        return UIDevice.current.name
+        return "don know"//UIDevice.current.name
     }
 
     func startAdvertising(peripheral: BLEPeripheral) throws {
