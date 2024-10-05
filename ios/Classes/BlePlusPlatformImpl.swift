@@ -24,7 +24,7 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
     var peripheralManager : CBPeripheralManager!
     var advertisedServices: [CBMutableService]
     
-    override init(stateChangedHandler: StateChangedHandler) {
+    override init() {
         self.advertisedServices = []
         super.init()
         self.peripheralManager = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionShowPowerAlertKey : true])
