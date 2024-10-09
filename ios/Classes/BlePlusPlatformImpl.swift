@@ -23,13 +23,13 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
 
     var peripheralManager : CBPeripheralManager!
     var advertisedServices: [CBMutableService]
+    var cbManagerState : CBManagerState = CBManagerState.unknown
     
     override init() {
         self.advertisedServices = []
         super.init()
         self.peripheralManager = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionShowPowerAlertKey : true])
     }
-    
     
     func updateValue(svcUuid: String, charUuid: String, data: FlutterStandardTypedData) throws -> Bool  {
         let targetUuid = CBUUID(string: svcUuid)
@@ -44,14 +44,36 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
     }
     
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
-    
-    }
+        self.cbManagerState = peripheral.state
+        switch peripheral.state {
+         case .poweredOn:
+             print("Bluetooth is powered on, ready to use")
+         case .poweredOff:
+             print("Bluetooth is powered off")
+         case .resetting:
+             print("Bluetooth is resetting")
+         case .unauthorized:
+             print("Bluetooth is unauthorized")
+         case .unsupported:
+             print("Bluetooth is unsupported")
+         case .unknown:
+             print("Bluetooth state is unknown")
+         @unknown default:
+             fatalError("Unhandled state: \(peripheral.state.rawValue)")
+         }
+     }
     
     func getDeviceName() -> String {
         return "don know"//UIDevice.current.name
     }
 
     func startAdvertising(peripheral: BLEPeripheral) throws {
+        
+        if(self.cbManagerState != CBManagerState.poweredOn){
+            throw PigeonError(code: "ERR_001", message: "BLE not powered on", details: "BLE not powered on")
+        }
+        self.peripheralManager.removeAllServices();
+        
         var dataToBeAdvertised: [String: Any]! = [:]
         dataToBeAdvertised[CBAdvertisementDataServiceUUIDsKey] = [CBUUID(string: peripheral.uuid)]
         dataToBeAdvertised[CBAdvertisementDataLocalNameKey] = peripheral.name
@@ -61,19 +83,33 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
             let newService = CBMutableService(type: CBUUID(string: serviceEntry.uuid), primary: isPrimary)
             newService.characteristics = []
             serviceEntry.characteristics.forEach { charEntry in
-                let canRead = charEntry.isReadable ?? true
-                let canWrite = charEntry.isWritable ?? true
-                let canNotify = charEntry.isNotifiable ?? true;
+                let canRead = charEntry.isRead ?? false
+                let canWrite = charEntry.isWrite ?? false
+                let canNotify = charEntry.isNotify ?? false;
                 let properties: CBCharacteristicProperties = [
                     canRead ? .read : [],
                     canWrite ? .write : [],
                     canNotify ? .notify : []
                 ]
-                let newCharacteristic = CBMutableCharacteristic(type: CBUUID(string: charEntry.uuid), properties: properties, value: nil, permissions: [.readable, .writeable])
+                
+                let isReadable = charEntry.isReadable ?? false
+                let isWritable = charEntry.isWritable ?? false
+                let permissions: CBAttributePermissions = [
+                    isReadable ? .readable : [],
+                    isWritable ? .writeable : []
+                ]
+       
+                let data: Data? = charEntry.value?.data
+                let newCharacteristic = CBMutableCharacteristic(type: CBUUID(string: charEntry.uuid), properties: properties, value: data, permissions: permissions)
                 newService.characteristics?.append(newCharacteristic)
+                
             }
             advertisedServices.append(newService)
-            peripheralManager.add(newService)
+            do {
+                peripheralManager.add(newService)
+            }catch let error {
+                let pigeonError = PigeonError(code:"ERR_002", message:"add service error", details: error.localizedDescription)
+            }
         }
         
     }

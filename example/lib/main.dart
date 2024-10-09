@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'package:hex/hex.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bleplus_plugin/flutter_bleplus_plugin.dart';
 import 'package:flutter_bleplus_plugin/generated/ble_peripheral_api.dart';
+import 'package:hex/hex.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,18 +32,24 @@ class _MyAppState extends State<MyApp> {
     List<BLECharacteristic> characteristics = [
       BLECharacteristic(
           uuid: 'ce060035-43e5-11e4-916c-0800200c9a66',
-          isReadable: true,
+          isRead: true,
+          isWrite: true,
+          isNotify: true,
           isWritable: true,
-          isNotifiable: true),
+          isReadable: true),
       BLECharacteristic(
           uuid: 'ce060035-43e6-11e4-916c-0800200c9a66',
-          isReadable: true,
-          isWritable: true,
-          isNotifiable: true)
+          value: Uint8List.fromList("hello world above".codeUnits),
+          isRead: true,
+          isWrite: false,
+          isNotify: false,
+          isWritable: false,
+          isReadable: true)
     ];
     BLEService service = BLEService(
         uuid: 'ce061801-43e5-11e4-916c-0800200c9a66',
-        characteristics: characteristics, isPrimary: true);
+        characteristics: characteristics,
+        isPrimary: true);
     List<BLEService> services = [service];
     BLEPeripheral peripheral = BLEPeripheral(
         name: 'PM Test',
@@ -51,8 +58,7 @@ class _MyAppState extends State<MyApp> {
     _blePeripheralApi.startAdvertising(peripheral);
   }
 
-  Future<void>_updateCharacteristic() async {
-
+  Future<void> _updateCharacteristic() async {
     List<String> hexDataList = [
       "00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00",
       "5f:00:00:1c:00:00:61:4f:00:00:e1:00:63:05:d9:03:00:00:01:00",
@@ -80,8 +86,9 @@ class _MyAppState extends State<MyApp> {
     void tick(Timer tock) {
       //sleep(const Duration(milliseconds: 100));
       List<int> buffer =
-      HEX.decode(hexDataList[i % hexDataList.length].replaceAll(":", ""));
-      _blePeripheralApi.updateValue("ce061801-43e5-11e4-916c-0800200c9a66", "ce060035-43e5-11e4-916c-0800200c9a66", Uint8List.fromList(buffer));
+          HEX.decode(hexDataList[i % hexDataList.length].replaceAll(":", ""));
+      _blePeripheralApi.updateValue("ce061801-43e5-11e4-916c-0800200c9a66",
+          "ce060035-43e5-11e4-916c-0800200c9a66", Uint8List.fromList(buffer));
       print("sent total: $i");
       if (i++ > 10) {
         tock.cancel();
@@ -89,8 +96,6 @@ class _MyAppState extends State<MyApp> {
     }
 
     Timer.periodic(Duration(milliseconds: 5000), tick);
-
-
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.

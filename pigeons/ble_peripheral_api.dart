@@ -40,11 +40,12 @@ class BLEPeripheral {
 
 class BLECharacteristic {
   String uuid; // UUID of the BLE characteristic
-  String? value; // Value of the characteristic
-  bool? isReadable; // Is this characteristic readable?
-  bool? isWritable; // Is this characteristic writable?
-  bool? isNotifiable; // Is this characteristic notifiable?
-
+  Uint8List? value; // Value of the characteristic
+  bool? isRead;
+  bool? isWrite;
+  bool? isNotify;
+  bool? isReadable;
+  bool? isWritable;
   BLECharacteristic(this.uuid);
 }
 

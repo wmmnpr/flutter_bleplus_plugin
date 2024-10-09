@@ -125,36 +125,44 @@ struct BLEPeripheral {
 /// Generated class from Pigeon that represents data sent in messages.
 struct BLECharacteristic {
   var uuid: String
-  var value: String? = nil
+  var value: FlutterStandardTypedData? = nil
+  var isRead: Bool? = nil
+  var isWrite: Bool? = nil
+  var isNotify: Bool? = nil
   var isReadable: Bool? = nil
   var isWritable: Bool? = nil
-  var isNotifiable: Bool? = nil
 
 
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> BLECharacteristic? {
     let uuid = pigeonVar_list[0] as! String
-    let value: String? = nilOrValue(pigeonVar_list[1])
-    let isReadable: Bool? = nilOrValue(pigeonVar_list[2])
-    let isWritable: Bool? = nilOrValue(pigeonVar_list[3])
-    let isNotifiable: Bool? = nilOrValue(pigeonVar_list[4])
+    let value: FlutterStandardTypedData? = nilOrValue(pigeonVar_list[1])
+    let isRead: Bool? = nilOrValue(pigeonVar_list[2])
+    let isWrite: Bool? = nilOrValue(pigeonVar_list[3])
+    let isNotify: Bool? = nilOrValue(pigeonVar_list[4])
+    let isReadable: Bool? = nilOrValue(pigeonVar_list[5])
+    let isWritable: Bool? = nilOrValue(pigeonVar_list[6])
 
     return BLECharacteristic(
       uuid: uuid,
       value: value,
+      isRead: isRead,
+      isWrite: isWrite,
+      isNotify: isNotify,
       isReadable: isReadable,
-      isWritable: isWritable,
-      isNotifiable: isNotifiable
+      isWritable: isWritable
     )
   }
   func toList() -> [Any?] {
     return [
       uuid,
       value,
+      isRead,
+      isWrite,
+      isNotify,
       isReadable,
       isWritable,
-      isNotifiable,
     ]
   }
 }
