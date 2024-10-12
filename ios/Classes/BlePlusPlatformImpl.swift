@@ -21,12 +21,16 @@ import CoreLocation
 
 class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelegate {
 
+    var binaryMessenger: FlutterBinaryMessenger;
     var peripheralManager : CBPeripheralManager!
     var advertisedServices: [CBMutableService]
     var cbManagerState : CBManagerState = CBManagerState.unknown
+    var bLECallback: BLECallback;
     
-    override init() {
+    init(binaryMessenger: FlutterBinaryMessenger) {
         self.advertisedServices = []
+        self.binaryMessenger = binaryMessenger
+        self.bLECallback = BLECallback(binaryMessenger: binaryMessenger)
         super.init()
         self.peripheralManager = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionShowPowerAlertKey : true])
     }
@@ -104,20 +108,23 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
                 newService.characteristics?.append(newCharacteristic)
                 
             }
+            
             advertisedServices.append(newService)
-            do {
-                peripheralManager.add(newService)
-            }catch let error {
-                let pigeonError = PigeonError(code:"ERR_002", message:"add service error", details: error.localizedDescription)
-            }
+            peripheralManager.add(newService)
         }
         
     }
     
     func stopAdvertising() throws {
         
-        
-    
+        self.bLECallback.onL2CAPChannelError(errorMessage: "Failed to open L2CAP channel") { result in
+            switch result {
+            case .success:
+                print("Success, no errors.")
+            case .failure(let error):
+                print("Error: \(error.localizedDescription)")
+            }
+        }
     }
 }
 

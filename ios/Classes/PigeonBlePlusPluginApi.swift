@@ -55,6 +55,10 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 
+private func createConnectionError(withChannelName channelName: String) -> PigeonError {
+  return PigeonError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
+}
+
 private func isNullish(_ value: Any?) -> Bool {
   return value is NSNull || value == nil
 }
@@ -213,6 +217,39 @@ class PigeonBlePlusPluginApiPigeonCodec: FlutterStandardMessageCodec, @unchecked
   static let shared = PigeonBlePlusPluginApiPigeonCodec(readerWriter: PigeonBlePlusPluginApiPigeonCodecReaderWriter())
 }
 
+/// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
+protocol BLECallbackProtocol {
+  func onL2CAPChannelError(errorMessage errorMessageArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void)
+}
+class BLECallback: BLECallbackProtocol {
+  private let binaryMessenger: FlutterBinaryMessenger
+  private let messageChannelSuffix: String
+  init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "") {
+    self.binaryMessenger = binaryMessenger
+    self.messageChannelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
+  }
+  var codec: PigeonBlePlusPluginApiPigeonCodec {
+    return PigeonBlePlusPluginApiPigeonCodec.shared
+  }
+  func onL2CAPChannelError(errorMessage errorMessageArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onL2CAPChannelError\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([errorMessageArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+}
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol BLEPeripheralApi {
   func startAdvertising(peripheral: BLEPeripheral) throws

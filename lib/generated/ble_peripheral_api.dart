@@ -15,6 +15,16 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+  if (empty) {
+    return <Object?>[];
+  }
+  if (error == null) {
+    return <Object?>[result];
+  }
+  return <Object?>[error.code, error.message, error.details];
+}
+
 class BLEService {
   BLEService({
     required this.uuid,
@@ -161,6 +171,41 @@ class _PigeonCodec extends StandardMessageCodec {
         return BLECharacteristic.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+abstract class BLECallback {
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  void onL2CAPChannelError(String errorMessage);
+
+  static void setUp(BLECallback? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onL2CAPChannelError$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onL2CAPChannelError was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_errorMessage = (args[0] as String?);
+          assert(arg_errorMessage != null,
+              'Argument for dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onL2CAPChannelError was null, expected non-null String.');
+          try {
+            api.onL2CAPChannelError(arg_errorMessage!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
   }
 }

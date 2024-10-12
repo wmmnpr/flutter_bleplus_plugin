@@ -2,14 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSBluetoothServices</key>
-	<array>
-		<string></string>
-	</array>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Bluetooth is required in order to advertise via BLE</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>Bluetooth peripheral usage is required </string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
+	<key>com.apple.security.device.bluetooth</key>
+    <true/>
+    <key>com.apple.security.device.bluetooth-le</key>
+    <true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

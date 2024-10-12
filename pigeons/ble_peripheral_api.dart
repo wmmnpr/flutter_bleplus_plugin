@@ -49,6 +49,11 @@ class BLECharacteristic {
   BLECharacteristic(this.uuid);
 }
 
+@FlutterApi()
+abstract class BLECallback {
+  void onL2CAPChannelError(String errorMessage);
+}
+
 @HostApi()
 abstract class BLEPeripheralApi {
   // Starts advertising the BLE peripheral

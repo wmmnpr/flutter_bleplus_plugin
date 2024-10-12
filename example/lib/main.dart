@@ -6,6 +6,21 @@ import 'package:flutter_bleplus_plugin/flutter_bleplus_plugin.dart';
 import 'package:flutter_bleplus_plugin/generated/ble_peripheral_api.dart';
 import 'package:hex/hex.dart';
 
+
+class BLECallbackImpl extends BLECallback {
+
+  late TextEditingController textEditingController;
+
+  BLECallbackImpl(this.textEditingController);
+
+  @override
+  void onL2CAPChannelError(String errorMessage) {
+    print('L2CAP Channel Error: $errorMessage');
+    textEditingController.text += errorMessage;
+    // Handle the error in Flutter (e.g., display a message to the user)
+  }
+}
+
 void main() {
   runApp(const MyApp());
 }
@@ -21,11 +36,19 @@ class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   final _flutterBleplusPlugin = FlutterBleplusPlugin();
   final _blePeripheralApi = BLEPeripheralApi();
+  final TextEditingController _outputTextController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
+    final bleCallback = BLECallbackImpl(this._outputTextController);
+    BLECallback.setUp(bleCallback);
+
+  }
+
+  Future<void> _pressTestCallback() async {
+      _blePeripheralApi.stopAdvertising();
   }
 
   Future<void> _pressMeButton() async {
@@ -152,6 +175,25 @@ class _MyAppState extends State<MyApp> {
                       .copyWith(color: Colors.blue),
                 ),
               ),
+              MaterialButton(
+                onPressed: () => _pressTestCallback(),
+                child: Text(
+                  'test callback',
+                  style: Theme.of(context)
+                      .primaryTextTheme
+                      .labelLarge!
+                      .copyWith(color: Colors.blue),
+                ),
+              ),
+              TextField(
+                controller: _outputTextController,
+                readOnly: false,
+                maxLines: 10, // Allows multiline input
+                decoration: const InputDecoration(
+                  labelText: 'Input/Output Window',
+                  border: OutlineInputBorder(),
+                ),
+              )
             ],
           ),
         ),

@@ -13,7 +13,7 @@ import UIKit
       let binaryMessenger = controller.binaryMessenger
       
       // Register the Pigeon API here
-      BLEPeripheralApiSetup.setUp(binaryMessenger: binaryMessenger, api: BlePlusPlatformImpl())
+      BLEPeripheralApiSetup.setUp(binaryMessenger: binaryMessenger, api: BlePlusPlatformImpl(binaryMessenger : binaryMessenger))
 
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
