@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bleplus_plugin/flutter_bleplus_plugin.dart';
 import 'package:flutter_bleplus_plugin/generated/ble_peripheral_api.dart';
 import 'package:hex/hex.dart';
 
@@ -30,8 +29,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-  final _flutterBleplusPlugin = FlutterBleplusPlugin();
-  final _blePeripheralApi = BLEPeripheralApi();
+  final _flutterBleplusPlugin = FlutterBlePlusPlugin();
   final TextEditingController _outputTextController = TextEditingController();
 
   @override
@@ -43,7 +41,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _pressTestCallback() async {
-    _blePeripheralApi.stopAdvertising();
+    _flutterBleplusPlugin.stopAdvertising();
   }
 
   Future<void> _pressMeButton() async {
@@ -70,7 +68,7 @@ class _MyAppState extends State<MyApp> {
         name: 'PM Test',
         uuid: 'bf277777-860a-4e09-889c-2d8b6a9e0fe7',
         services: services);
-    _blePeripheralApi.startAdvertising(peripheral);
+    _flutterBleplusPlugin.startAdvertising(peripheral);
   }
 
   Future<void> _updateCharacteristic() async {
@@ -102,7 +100,7 @@ class _MyAppState extends State<MyApp> {
       //sleep(const Duration(milliseconds: 100));
       List<int> buffer =
           HEX.decode(hexDataList[i % hexDataList.length].replaceAll(":", ""));
-      _blePeripheralApi.updateValue("ce061801-43e5-11e4-916c-0800200c9a66",
+      _flutterBleplusPlugin.updateValue("ce061801-43e5-11e4-916c-0800200c9a66",
           "ce060035-43e5-11e4-916c-0800200c9a66", Uint8List.fromList(buffer));
       print("sent total: $i");
       if (i++ > 10) {

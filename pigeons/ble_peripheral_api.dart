@@ -27,6 +27,7 @@ class BLEService {
   String uuid; // UUID of the BLE service
   List<BLECharacteristic> characteristics;
   bool? isPrimary;
+
   BLEService(this.uuid, this.characteristics, this.isPrimary);
 }
 
@@ -43,6 +44,7 @@ class BLECharacteristic {
   Uint8List? value; // Value of the characteristic
   Uint8List? properties;
   Uint8List? permissions;
+
   BLECharacteristic(this.uuid);
 }
 
@@ -50,6 +52,7 @@ class BLEEvent {
   String eventType;
   String? deviceId;
   String? state;
+
   BLEEvent(this.eventType);
 }
 
@@ -59,8 +62,9 @@ abstract class BLECallback {
 }
 
 @HostApi()
-abstract class BLEPeripheralApi {
-  // Starts advertising the BLE peripheral
+abstract class FlutterBlePlusPlugin {
+  String getPlatformVersion();
+
   void startAdvertising(BLEPeripheral peripheral);
 
   bool updateValue(String svcUuid, String charUuid, Uint8List data);

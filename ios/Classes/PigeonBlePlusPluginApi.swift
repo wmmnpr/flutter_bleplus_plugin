@@ -273,19 +273,33 @@ class BLECallback: BLECallbackProtocol {
   }
 }
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
-protocol BLEPeripheralApi {
+protocol FlutterBlePlusPlugin {
+  func getPlatformVersion() throws -> String
   func startAdvertising(peripheral: BLEPeripheral) throws
   func updateValue(svcUuid: String, charUuid: String, data: FlutterStandardTypedData) throws -> Bool
   func stopAdvertising() throws
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
-class BLEPeripheralApiSetup {
+class FlutterBlePlusPluginSetup {
   static var codec: FlutterStandardMessageCodec { PigeonBlePlusPluginApiPigeonCodec.shared }
-  /// Sets up an instance of `BLEPeripheralApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: BLEPeripheralApi?, messageChannelSuffix: String = "") {
+  /// Sets up an instance of `FlutterBlePlusPlugin` to handle messages through the `binaryMessenger`.
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: FlutterBlePlusPlugin?, messageChannelSuffix: String = "") {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    let startAdvertisingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_bleplus_plugin.BLEPeripheralApi.startAdvertising\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let getPlatformVersionChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_bleplus_plugin.FlutterBlePlusPlugin.getPlatformVersion\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getPlatformVersionChannel.setMessageHandler { _, reply in
+        do {
+          let result = try api.getPlatformVersion()
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      getPlatformVersionChannel.setMessageHandler(nil)
+    }
+    let startAdvertisingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_bleplus_plugin.FlutterBlePlusPlugin.startAdvertising\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       startAdvertisingChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -300,7 +314,7 @@ class BLEPeripheralApiSetup {
     } else {
       startAdvertisingChannel.setMessageHandler(nil)
     }
-    let updateValueChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_bleplus_plugin.BLEPeripheralApi.updateValue\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let updateValueChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_bleplus_plugin.FlutterBlePlusPlugin.updateValue\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       updateValueChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -317,7 +331,7 @@ class BLEPeripheralApiSetup {
     } else {
       updateValueChannel.setMessageHandler(nil)
     }
-    let stopAdvertisingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_bleplus_plugin.BLEPeripheralApi.stopAdvertising\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let stopAdvertisingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_bleplus_plugin.FlutterBlePlusPlugin.stopAdvertising\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       stopAdvertisingChannel.setMessageHandler { _, reply in
         do {

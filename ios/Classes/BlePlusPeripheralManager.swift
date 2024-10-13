@@ -19,7 +19,11 @@ import CoreLocation
 
 
 
-class BlePlusPeripheralManager: NSObject, BLEPeripheralApi, CBPeripheralManagerDelegate {
+class BlePlusPeripheralManager: NSObject, FlutterBlePlusPlugin, CBPeripheralManagerDelegate {
+    func getPlatformVersion() throws -> String {
+        "don know!"
+    }
+    
     var binaryMessenger: FlutterBinaryMessenger;
     var peripheralManager : CBPeripheralManager!
     var advertisedServices: [CBMutableService]

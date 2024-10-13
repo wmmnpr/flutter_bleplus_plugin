@@ -11,8 +11,8 @@
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		3D0F44122CB1CB4200F7A8D3 /* PigeonBlePlusPluginApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0F440F2CB1CB4200F7A8D3 /* PigeonBlePlusPluginApi.swift */; };
-		3D0F44132CB1CB4200F7A8D3 /* BlePlusPlatformImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0F44102CB1CB4200F7A8D3 /* BlePlusPlatformImpl.swift */; };
 		3D0F44142CB1CB4200F7A8D3 /* FlutterBleplusPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0F44112CB1CB4200F7A8D3 /* FlutterBleplusPlugin.swift */; };
+		3D3A15BA2CBC4E0E0096C3F5 /* BlePlusPeripheralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3A15B92CBC4E0E0096C3F5 /* BlePlusPeripheralManager.swift */; };
 		5DA83B5A54C69111B62028A9 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05A223FD4FA81E132421B037 /* Pods_RunnerTests.framework */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -52,8 +52,8 @@
 		331C8081294A63A400263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		3D0F440F2CB1CB4200F7A8D3 /* PigeonBlePlusPluginApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PigeonBlePlusPluginApi.swift; path = ../../../ios/Classes/PigeonBlePlusPluginApi.swift; sourceTree = "<group>"; };
-		3D0F44102CB1CB4200F7A8D3 /* BlePlusPlatformImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BlePlusPlatformImpl.swift; path = ../../../ios/Classes/BlePlusPlatformImpl.swift; sourceTree = "<group>"; };
 		3D0F44112CB1CB4200F7A8D3 /* FlutterBleplusPlugin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FlutterBleplusPlugin.swift; path = ../../../ios/Classes/FlutterBleplusPlugin.swift; sourceTree = "<group>"; };
+		3D3A15B92CBC4E0E0096C3F5 /* BlePlusPeripheralManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BlePlusPeripheralManager.swift; path = ../../../ios/Classes/BlePlusPeripheralManager.swift; sourceTree = "<group>"; };
 		50FEA93270A8E19523A6CDAB /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 		544E5C224147A532B14B6AD9 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		547EFDC4E672BF0FA4A262EB /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
@@ -149,7 +149,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
-				3D0F44102CB1CB4200F7A8D3 /* BlePlusPlatformImpl.swift */,
+				3D3A15B92CBC4E0E0096C3F5 /* BlePlusPeripheralManager.swift */,
 				3D0F44112CB1CB4200F7A8D3 /* FlutterBleplusPlugin.swift */,
 				3D0F440F2CB1CB4200F7A8D3 /* PigeonBlePlusPluginApi.swift */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
@@ -387,7 +387,7 @@
 			files = (
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				3D0F44122CB1CB4200F7A8D3 /* PigeonBlePlusPluginApi.swift in Sources */,
-				3D0F44132CB1CB4200F7A8D3 /* BlePlusPlatformImpl.swift in Sources */,
+				3D3A15BA2CBC4E0E0096C3F5 /* BlePlusPeripheralManager.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				3D0F44142CB1CB4200F7A8D3 /* FlutterBleplusPlugin.swift in Sources */,
 			);

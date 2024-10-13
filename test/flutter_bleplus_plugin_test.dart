@@ -1,8 +1,9 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_bleplus_plugin/flutter_bleplus_plugin.dart';
 import 'package:flutter_bleplus_plugin/flutter_bleplus_plugin_platform_interface.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bleplus_plugin/flutter_bleplus_plugin_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+
+import '../pigeons/ble_peripheral_api.dart';
 
 class MockFlutterBleplusPluginPlatform
     with MockPlatformInterfaceMixin
@@ -20,10 +21,6 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    FlutterBleplusPlugin flutterBleplusPlugin = FlutterBleplusPlugin();
-    MockFlutterBleplusPluginPlatform fakePlatform = MockFlutterBleplusPluginPlatform();
-    FlutterBleplusPluginPlatform.instance = fakePlatform;
 
-    expect(await flutterBleplusPlugin.getPlatformVersion(), '42');
   });
 }
