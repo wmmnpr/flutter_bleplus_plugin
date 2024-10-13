@@ -50,19 +50,16 @@ class _MyAppState extends State<MyApp> {
     List<BLECharacteristic> characteristics = [
       BLECharacteristic(
           uuid: 'ce060035-43e5-11e4-916c-0800200c9a66',
-          isRead: true,
-          isWrite: true,
-          isNotify: true,
-          isWritable: true,
-          isReadable: true),
+          properties: Uint8List.fromList([0x10]),
+          permissions: Uint8List.fromList([0x01, 0x02])
+      ),
       BLECharacteristic(
           uuid: 'ce060035-43e6-11e4-916c-0800200c9a66',
           value: Uint8List.fromList("hello world above".codeUnits),
-          isRead: true,
-          isWrite: false,
-          isNotify: false,
-          isWritable: false,
-          isReadable: true)
+          properties: Uint8List.fromList([0x02]),
+          permissions: Uint8List.fromList([0x01])
+
+      )
     ];
     BLEService service = BLEService(
         uuid: 'ce061801-43e5-11e4-916c-0800200c9a66',

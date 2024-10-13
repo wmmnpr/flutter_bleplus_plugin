@@ -85,26 +85,17 @@ class BlePlusPeripheralManager: NSObject, BLEPeripheralApi, CBPeripheralManagerD
             let newService = CBMutableService(type: CBUUID(string: serviceEntry.uuid), primary: isPrimary)
             newService.characteristics = []
             serviceEntry.characteristics.forEach { charEntry in
-                let canRead = charEntry.isRead ?? false
-                let canWrite = charEntry.isWrite ?? false
-                let canNotify = charEntry.isNotify ?? false;
-                let properties: CBCharacteristicProperties = [
-                    canRead ? .read : [],
-                    canWrite ? .write : [],
-                    canNotify ? .notify : []
-                ]
-                
-                let isReadable = charEntry.isReadable ?? false
-                let isWritable = charEntry.isWritable ?? false
-                let permissions: CBAttributePermissions = [
-                    isReadable ? .readable : [],
-                    isWritable ? .writeable : []
-                ]
-       
+                var properties: CBCharacteristicProperties = [];
+                charEntry.properties?.data.forEach({ prop in
+                    properties.insert(CBCharacteristicProperties.Element(rawValue: UInt(prop)))
+                })
+                var permissions: CBAttributePermissions = []
+                charEntry.permissions?.data.forEach({ perm in
+                    permissions.insert(CBAttributePermissions.Element(rawValue: UInt(perm)))
+                })
                 let data: Data? = charEntry.value?.data
                 let newCharacteristic = CBMutableCharacteristic(type: CBUUID(string: charEntry.uuid), properties: properties, value: data, permissions: permissions)
                 newService.characteristics?.append(newCharacteristic)
-                
             }
             
             advertisedServices.append(newService)

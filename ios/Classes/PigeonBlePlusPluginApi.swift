@@ -130,11 +130,8 @@ struct BLEPeripheral {
 struct BLECharacteristic {
   var uuid: String
   var value: FlutterStandardTypedData? = nil
-  var isRead: Bool? = nil
-  var isWrite: Bool? = nil
-  var isNotify: Bool? = nil
-  var isReadable: Bool? = nil
-  var isWritable: Bool? = nil
+  var properties: FlutterStandardTypedData? = nil
+  var permissions: FlutterStandardTypedData? = nil
 
 
 
@@ -142,31 +139,22 @@ struct BLECharacteristic {
   static func fromList(_ pigeonVar_list: [Any?]) -> BLECharacteristic? {
     let uuid = pigeonVar_list[0] as! String
     let value: FlutterStandardTypedData? = nilOrValue(pigeonVar_list[1])
-    let isRead: Bool? = nilOrValue(pigeonVar_list[2])
-    let isWrite: Bool? = nilOrValue(pigeonVar_list[3])
-    let isNotify: Bool? = nilOrValue(pigeonVar_list[4])
-    let isReadable: Bool? = nilOrValue(pigeonVar_list[5])
-    let isWritable: Bool? = nilOrValue(pigeonVar_list[6])
+    let properties: FlutterStandardTypedData? = nilOrValue(pigeonVar_list[2])
+    let permissions: FlutterStandardTypedData? = nilOrValue(pigeonVar_list[3])
 
     return BLECharacteristic(
       uuid: uuid,
       value: value,
-      isRead: isRead,
-      isWrite: isWrite,
-      isNotify: isNotify,
-      isReadable: isReadable,
-      isWritable: isWritable
+      properties: properties,
+      permissions: permissions
     )
   }
   func toList() -> [Any?] {
     return [
       uuid,
       value,
-      isRead,
-      isWrite,
-      isNotify,
-      isReadable,
-      isWritable,
+      properties,
+      permissions,
     ]
   }
 }

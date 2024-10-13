@@ -91,36 +91,24 @@ class BLECharacteristic {
   BLECharacteristic({
     required this.uuid,
     this.value,
-    this.isRead,
-    this.isWrite,
-    this.isNotify,
-    this.isReadable,
-    this.isWritable,
+    this.properties,
+    this.permissions,
   });
 
   String uuid;
 
   Uint8List? value;
 
-  bool? isRead;
+  Uint8List? properties;
 
-  bool? isWrite;
-
-  bool? isNotify;
-
-  bool? isReadable;
-
-  bool? isWritable;
+  Uint8List? permissions;
 
   Object encode() {
     return <Object?>[
       uuid,
       value,
-      isRead,
-      isWrite,
-      isNotify,
-      isReadable,
-      isWritable,
+      properties,
+      permissions,
     ];
   }
 
@@ -129,11 +117,8 @@ class BLECharacteristic {
     return BLECharacteristic(
       uuid: result[0]! as String,
       value: result[1] as Uint8List?,
-      isRead: result[2] as bool?,
-      isWrite: result[3] as bool?,
-      isNotify: result[4] as bool?,
-      isReadable: result[5] as bool?,
-      isWritable: result[6] as bool?,
+      properties: result[2] as Uint8List?,
+      permissions: result[3] as Uint8List?,
     );
   }
 }
