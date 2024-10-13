@@ -19,12 +19,10 @@ import CoreLocation
 
 
 
-class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelegate {
-
+class BlePlusPeripheralManager: NSObject, BLEPeripheralApi, CBPeripheralManagerDelegate {
     var binaryMessenger: FlutterBinaryMessenger;
     var peripheralManager : CBPeripheralManager!
     var advertisedServices: [CBMutableService]
-    var cbManagerState : CBManagerState = CBManagerState.unknown
     var bLECallback: BLECallback;
     
     init(binaryMessenger: FlutterBinaryMessenger) {
@@ -48,7 +46,7 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
     }
     
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
-        self.cbManagerState = peripheral.state
+        notifyApi(eventType: "STATE_CHANGE")
         switch peripheral.state {
          case .poweredOn:
              print("Bluetooth is powered on, ready to use")
@@ -73,7 +71,7 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
 
     func startAdvertising(peripheral: BLEPeripheral) throws {
         
-        if(self.cbManagerState != CBManagerState.poweredOn){
+        if(self.peripheralManager.state != CBManagerState.poweredOn){
             throw PigeonError(code: "ERR_001", message: "BLE not powered on", details: "BLE not powered on")
         }
         self.peripheralManager.removeAllServices();
@@ -116,8 +114,12 @@ class BlePlusPlatformImpl: NSObject, BLEPeripheralApi, CBPeripheralManagerDelega
     }
     
     func stopAdvertising() throws {
-        
-        self.bLECallback.onL2CAPChannelError(errorMessage: "Failed to open L2CAP channel") { result in
+        notifyApi(eventType: "ADVERTISE_STOP")
+    }
+    
+    func notifyApi(eventType: String){
+        let bleEvent = BLEEvent(eventType: eventType)
+        self.bLECallback.onBLEEvent(event: bleEvent) { result in
             switch result {
             case .success:
                 print("Success, no errors.")

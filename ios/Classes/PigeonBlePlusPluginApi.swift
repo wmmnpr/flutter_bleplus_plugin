@@ -171,6 +171,35 @@ struct BLECharacteristic {
   }
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+struct BLEEvent {
+  var eventType: String
+  var deviceId: String? = nil
+  var state: String? = nil
+
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> BLEEvent? {
+    let eventType = pigeonVar_list[0] as! String
+    let deviceId: String? = nilOrValue(pigeonVar_list[1])
+    let state: String? = nilOrValue(pigeonVar_list[2])
+
+    return BLEEvent(
+      eventType: eventType,
+      deviceId: deviceId,
+      state: state
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      eventType,
+      deviceId,
+      state,
+    ]
+  }
+}
+
 private class PigeonBlePlusPluginApiPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -180,6 +209,8 @@ private class PigeonBlePlusPluginApiPigeonCodecReader: FlutterStandardReader {
       return BLEPeripheral.fromList(self.readValue() as! [Any?])
     case 131:
       return BLECharacteristic.fromList(self.readValue() as! [Any?])
+    case 132:
+      return BLEEvent.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -196,6 +227,9 @@ private class PigeonBlePlusPluginApiPigeonCodecWriter: FlutterStandardWriter {
       super.writeValue(value.toList())
     } else if let value = value as? BLECharacteristic {
       super.writeByte(131)
+      super.writeValue(value.toList())
+    } else if let value = value as? BLEEvent {
+      super.writeByte(132)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -219,7 +253,7 @@ class PigeonBlePlusPluginApiPigeonCodec: FlutterStandardMessageCodec, @unchecked
 
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol BLECallbackProtocol {
-  func onL2CAPChannelError(errorMessage errorMessageArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func onBLEEvent(event eventArg: BLEEvent, completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 class BLECallback: BLECallbackProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -231,10 +265,10 @@ class BLECallback: BLECallbackProtocol {
   var codec: PigeonBlePlusPluginApiPigeonCodec {
     return PigeonBlePlusPluginApiPigeonCodec.shared
   }
-  func onL2CAPChannelError(errorMessage errorMessageArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void) {
-    let channelName: String = "dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onL2CAPChannelError\(messageChannelSuffix)"
+  func onBLEEvent(event eventArg: BLEEvent, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onBLEEvent\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([errorMessageArg] as [Any?]) { response in
+    channel.sendMessage([eventArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return

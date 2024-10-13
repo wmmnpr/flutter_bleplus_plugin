@@ -49,9 +49,16 @@ class BLECharacteristic {
   BLECharacteristic(this.uuid);
 }
 
+class BLEEvent {
+  String eventType;
+  String? deviceId;
+  String? state;
+  BLEEvent(this.eventType);
+}
+
 @FlutterApi()
 abstract class BLECallback {
-  void onL2CAPChannelError(String errorMessage);
+  void onBLEEvent(BLEEvent event);
 }
 
 @HostApi()

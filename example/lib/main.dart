@@ -6,18 +6,14 @@ import 'package:flutter_bleplus_plugin/flutter_bleplus_plugin.dart';
 import 'package:flutter_bleplus_plugin/generated/ble_peripheral_api.dart';
 import 'package:hex/hex.dart';
 
-
 class BLECallbackImpl extends BLECallback {
-
   late TextEditingController textEditingController;
 
   BLECallbackImpl(this.textEditingController);
 
   @override
-  void onL2CAPChannelError(String errorMessage) {
-    print('L2CAP Channel Error: $errorMessage');
-    textEditingController.text += errorMessage;
-    // Handle the error in Flutter (e.g., display a message to the user)
+  void onBLEEvent(BLEEvent event) {
+    textEditingController.text += ";${event.eventType}";
   }
 }
 
@@ -44,11 +40,10 @@ class _MyAppState extends State<MyApp> {
     initPlatformState();
     final bleCallback = BLECallbackImpl(this._outputTextController);
     BLECallback.setUp(bleCallback);
-
   }
 
   Future<void> _pressTestCallback() async {
-      _blePeripheralApi.stopAdvertising();
+    _blePeripheralApi.stopAdvertising();
   }
 
   Future<void> _pressMeButton() async {

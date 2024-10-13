@@ -138,6 +138,37 @@ class BLECharacteristic {
   }
 }
 
+class BLEEvent {
+  BLEEvent({
+    required this.eventType,
+    this.deviceId,
+    this.state,
+  });
+
+  String eventType;
+
+  String? deviceId;
+
+  String? state;
+
+  Object encode() {
+    return <Object?>[
+      eventType,
+      deviceId,
+      state,
+    ];
+  }
+
+  static BLEEvent decode(Object result) {
+    result as List<Object?>;
+    return BLEEvent(
+      eventType: result[0]! as String,
+      deviceId: result[1] as String?,
+      state: result[2] as String?,
+    );
+  }
+}
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -155,6 +186,9 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is BLECharacteristic) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
+    }    else if (value is BLEEvent) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -169,6 +203,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return BLEPeripheral.decode(readValue(buffer)!);
       case 131: 
         return BLECharacteristic.decode(readValue(buffer)!);
+      case 132: 
+        return BLEEvent.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -178,26 +214,26 @@ class _PigeonCodec extends StandardMessageCodec {
 abstract class BLECallback {
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
-  void onL2CAPChannelError(String errorMessage);
+  void onBLEEvent(BLEEvent event);
 
   static void setUp(BLECallback? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onL2CAPChannelError$messageChannelSuffix', pigeonChannelCodec,
+          'dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onBLEEvent$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onL2CAPChannelError was null.');
+          'Argument for dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onBLEEvent was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_errorMessage = (args[0] as String?);
-          assert(arg_errorMessage != null,
-              'Argument for dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onL2CAPChannelError was null, expected non-null String.');
+          final BLEEvent? arg_event = (args[0] as BLEEvent?);
+          assert(arg_event != null,
+              'Argument for dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onBLEEvent was null, expected non-null BLEEvent.');
           try {
-            api.onL2CAPChannelError(arg_errorMessage!);
+            api.onBLEEvent(arg_event!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

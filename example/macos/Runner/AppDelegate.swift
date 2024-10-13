@@ -14,7 +14,7 @@ class AppDelegate: FlutterAppDelegate {
             let binaryMessenger = flutterViewController.engine.binaryMessenger
             
             // Bootstrap your Pigeon-generated API
-            BLEPeripheralApiSetup.setUp(binaryMessenger: binaryMessenger, api: BlePlusPlatformImpl(binaryMessenger : binaryMessenger))
+            BLEPeripheralApiSetup.setUp(binaryMessenger: binaryMessenger, api: BlePlusPeripheralManager(binaryMessenger : binaryMessenger))
 
         }
     }
