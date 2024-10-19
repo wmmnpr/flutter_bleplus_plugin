@@ -154,6 +154,32 @@ class BLEEvent {
   }
 }
 
+class WriteRequest {
+  WriteRequest({
+    required this.characteristicUuid,
+    required this.value,
+  });
+
+  String characteristicUuid;
+
+  Uint8List value;
+
+  Object encode() {
+    return <Object?>[
+      characteristicUuid,
+      value,
+    ];
+  }
+
+  static WriteRequest decode(Object result) {
+    result as List<Object?>;
+    return WriteRequest(
+      characteristicUuid: result[0]! as String,
+      value: result[1]! as Uint8List,
+    );
+  }
+}
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -174,6 +200,9 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is BLEEvent) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
+    }    else if (value is WriteRequest) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -190,6 +219,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return BLECharacteristic.decode(readValue(buffer)!);
       case 132: 
         return BLEEvent.decode(readValue(buffer)!);
+      case 133: 
+        return WriteRequest.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -200,6 +231,8 @@ abstract class BLECallback {
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   void onBLEEvent(BLEEvent event);
+
+  void onDidReceiveWrite(List<WriteRequest> requests);
 
   static void setUp(BLECallback? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
@@ -219,6 +252,31 @@ abstract class BLECallback {
               'Argument for dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onBLEEvent was null, expected non-null BLEEvent.');
           try {
             api.onBLEEvent(arg_event!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onDidReceiveWrite$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onDidReceiveWrite was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final List<WriteRequest>? arg_requests = (args[0] as List<Object?>?)?.cast<WriteRequest>();
+          assert(arg_requests != null,
+              'Argument for dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onDidReceiveWrite was null, expected non-null List<WriteRequest>.');
+          try {
+            api.onDidReceiveWrite(arg_requests!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

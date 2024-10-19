@@ -14,6 +14,14 @@ class BLECallbackImpl extends BLECallback {
   void onBLEEvent(BLEEvent event) {
     textEditingController.text += ";${event.eventType}";
   }
+
+  @override
+  void onDidReceiveWrite(List<WriteRequest> requests) {
+    for(WriteRequest wr in requests){
+      textEditingController.text += ";${wr.characteristicUuid}" + "${wr.value}";
+    }
+
+  }
 }
 
 void main() {
@@ -53,9 +61,9 @@ class _MyAppState extends State<MyApp> {
       ),
       BLECharacteristic(
           uuid: 'ce060035-43e6-11e4-916c-0800200c9a66',
-          value: Uint8List.fromList("hello world above".codeUnits),
-          properties: Uint8List.fromList([0x02]),
-          permissions: Uint8List.fromList([0x01])
+          //value: Uint8List.fromList("hello world above".codeUnits),
+          properties: Uint8List.fromList([0x08]),
+          permissions: Uint8List.fromList([0x02])
 
       )
     ];

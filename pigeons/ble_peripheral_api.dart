@@ -56,9 +56,17 @@ class BLEEvent {
   BLEEvent(this.eventType);
 }
 
+class WriteRequest {
+  String characteristicUuid;
+  Uint8List value;
+  WriteRequest(this.characteristicUuid, this.value);
+}
+
+
 @FlutterApi()
 abstract class BLECallback {
   void onBLEEvent(BLEEvent event);
+  void onDidReceiveWrite(List<WriteRequest> requests);
 }
 
 @HostApi()

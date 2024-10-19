@@ -52,27 +52,27 @@ class BlePlusPeripheralManager: NSObject, FlutterBlePlusPlugin, CBPeripheralMana
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         notifyApi(eventType: "STATE_CHANGE")
         switch peripheral.state {
-         case .poweredOn:
-             print("Bluetooth is powered on, ready to use")
-         case .poweredOff:
-             print("Bluetooth is powered off")
-         case .resetting:
-             print("Bluetooth is resetting")
-         case .unauthorized:
-             print("Bluetooth is unauthorized")
-         case .unsupported:
-             print("Bluetooth is unsupported")
-         case .unknown:
-             print("Bluetooth state is unknown")
-         @unknown default:
-             fatalError("Unhandled state: \(peripheral.state.rawValue)")
-         }
-     }
+        case .poweredOn:
+            print("Bluetooth is powered on, ready to use")
+        case .poweredOff:
+            print("Bluetooth is powered off")
+        case .resetting:
+            print("Bluetooth is resetting")
+        case .unauthorized:
+            print("Bluetooth is unauthorized")
+        case .unsupported:
+            print("Bluetooth is unsupported")
+        case .unknown:
+            print("Bluetooth state is unknown")
+        @unknown default:
+            fatalError("Unhandled state: \(peripheral.state.rawValue)")
+        }
+    }
     
     func getDeviceName() -> String {
         return "don know"//UIDevice.current.name
     }
-
+    
     func startAdvertising(peripheral: BLEPeripheral) throws {
         
         if(self.peripheralManager.state != CBManagerState.poweredOn){
@@ -102,6 +102,11 @@ class BlePlusPeripheralManager: NSObject, FlutterBlePlusPlugin, CBPeripheralMana
                 newService.characteristics?.append(newCharacteristic)
             }
             
+            let properties: CBCharacteristicProperties = [
+                .read,
+                .write
+            ]
+            
             advertisedServices.append(newService)
             peripheralManager.add(newService)
         }
@@ -117,11 +122,30 @@ class BlePlusPeripheralManager: NSObject, FlutterBlePlusPlugin, CBPeripheralMana
         self.bLECallback.onBLEEvent(event: bleEvent) { result in
             switch result {
             case .success:
-                print("Success, no errors.")
+                print("notifyApi: Success= no errors.")
             case .failure(let error):
-                print("Error: \(error.localizedDescription)")
+                print("notifyApi: Error= \(error.localizedDescription)")
             }
         }
     }
+    
+    func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
+        for request: CBATTRequest in requests {
+            if let value = request.value {
+                let flutterData = FlutterStandardTypedData(bytes: value)
+                var writeRequest: WriteRequest = WriteRequest(characteristicUuid: request.characteristic.uuid.uuidString, value: flutterData)
+                var writeRequests:[WriteRequest] = [writeRequest]
+                self.bLECallback.onDidReceiveWrite(requests: writeRequests) { result in
+                    switch result {
+                    case .success:
+                        print("didReceiveWrite Success= no errors.")
+                        self.peripheralManager?.respond(to: request, withResult: .success);
+                    case .failure(let error):
+                        print("didReceiveWrite: Error= \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+    
 }
-
