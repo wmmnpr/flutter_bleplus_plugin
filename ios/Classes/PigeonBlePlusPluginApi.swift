@@ -213,6 +213,52 @@ struct WriteRequest {
   }
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+struct ReadRequest {
+  var deviceId: String
+  var characteristicUuid: String
+
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> ReadRequest? {
+    let deviceId = pigeonVar_list[0] as! String
+    let characteristicUuid = pigeonVar_list[1] as! String
+
+    return ReadRequest(
+      deviceId: deviceId,
+      characteristicUuid: characteristicUuid
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      deviceId,
+      characteristicUuid,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct ReadResponse {
+  var data: FlutterStandardTypedData
+
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> ReadResponse? {
+    let data = pigeonVar_list[0] as! FlutterStandardTypedData
+
+    return ReadResponse(
+      data: data
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      data
+    ]
+  }
+}
+
 private class PigeonBlePlusPluginApiPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -226,6 +272,10 @@ private class PigeonBlePlusPluginApiPigeonCodecReader: FlutterStandardReader {
       return BLEEvent.fromList(self.readValue() as! [Any?])
     case 133:
       return WriteRequest.fromList(self.readValue() as! [Any?])
+    case 134:
+      return ReadRequest.fromList(self.readValue() as! [Any?])
+    case 135:
+      return ReadResponse.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -248,6 +298,12 @@ private class PigeonBlePlusPluginApiPigeonCodecWriter: FlutterStandardWriter {
       super.writeValue(value.toList())
     } else if let value = value as? WriteRequest {
       super.writeByte(133)
+      super.writeValue(value.toList())
+    } else if let value = value as? ReadRequest {
+      super.writeByte(134)
+      super.writeValue(value.toList())
+    } else if let value = value as? ReadResponse {
+      super.writeByte(135)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -273,6 +329,7 @@ class PigeonBlePlusPluginApiPigeonCodec: FlutterStandardMessageCodec, @unchecked
 protocol BLECallbackProtocol {
   func onBLEEvent(event eventArg: BLEEvent, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func onDidReceiveWrite(requests requestsArg: [WriteRequest], completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func onDidReceiveRead(request requestArg: ReadRequest, completion: @escaping (Result<ReadResponse, PigeonError>) -> Void)
 }
 class BLECallback: BLECallbackProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -317,6 +374,27 @@ class BLECallback: BLECallbackProtocol {
         completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         completion(.success(Void()))
+      }
+    }
+  }
+  func onDidReceiveRead(request requestArg: ReadRequest, completion: @escaping (Result<ReadResponse, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onDidReceiveRead\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([requestArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil {
+        completion(.failure(PigeonError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! ReadResponse
+        completion(.success(result))
       }
     }
   }

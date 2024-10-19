@@ -180,6 +180,53 @@ class WriteRequest {
   }
 }
 
+class ReadRequest {
+  ReadRequest({
+    required this.deviceId,
+    required this.characteristicUuid,
+  });
+
+  String deviceId;
+
+  String characteristicUuid;
+
+  Object encode() {
+    return <Object?>[
+      deviceId,
+      characteristicUuid,
+    ];
+  }
+
+  static ReadRequest decode(Object result) {
+    result as List<Object?>;
+    return ReadRequest(
+      deviceId: result[0]! as String,
+      characteristicUuid: result[1]! as String,
+    );
+  }
+}
+
+class ReadResponse {
+  ReadResponse({
+    required this.data,
+  });
+
+  Uint8List data;
+
+  Object encode() {
+    return <Object?>[
+      data,
+    ];
+  }
+
+  static ReadResponse decode(Object result) {
+    result as List<Object?>;
+    return ReadResponse(
+      data: result[0]! as Uint8List,
+    );
+  }
+}
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -203,6 +250,12 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is WriteRequest) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
+    }    else if (value is ReadRequest) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    }    else if (value is ReadResponse) {
+      buffer.putUint8(135);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -221,6 +274,10 @@ class _PigeonCodec extends StandardMessageCodec {
         return BLEEvent.decode(readValue(buffer)!);
       case 133: 
         return WriteRequest.decode(readValue(buffer)!);
+      case 134: 
+        return ReadRequest.decode(readValue(buffer)!);
+      case 135: 
+        return ReadResponse.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -233,6 +290,8 @@ abstract class BLECallback {
   void onBLEEvent(BLEEvent event);
 
   void onDidReceiveWrite(List<WriteRequest> requests);
+
+  ReadResponse onDidReceiveRead(ReadRequest request);
 
   static void setUp(BLECallback? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
@@ -278,6 +337,31 @@ abstract class BLECallback {
           try {
             api.onDidReceiveWrite(arg_requests!);
             return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onDidReceiveRead$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onDidReceiveRead was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final ReadRequest? arg_request = (args[0] as ReadRequest?);
+          assert(arg_request != null,
+              'Argument for dev.flutter.pigeon.flutter_bleplus_plugin.BLECallback.onDidReceiveRead was null, expected non-null ReadRequest.');
+          try {
+            final ReadResponse output = api.onDidReceiveRead(arg_request!);
+            return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           }          catch (e) {

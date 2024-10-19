@@ -102,11 +102,6 @@ class BlePlusPeripheralManager: NSObject, FlutterBlePlusPlugin, CBPeripheralMana
                 newService.characteristics?.append(newCharacteristic)
             }
             
-            let properties: CBCharacteristicProperties = [
-                .read,
-                .write
-            ]
-            
             advertisedServices.append(newService)
             peripheralManager.add(newService)
         }
@@ -133,8 +128,8 @@ class BlePlusPeripheralManager: NSObject, FlutterBlePlusPlugin, CBPeripheralMana
         for request: CBATTRequest in requests {
             if let value = request.value {
                 let flutterData = FlutterStandardTypedData(bytes: value)
-                var writeRequest: WriteRequest = WriteRequest(characteristicUuid: request.characteristic.uuid.uuidString, value: flutterData)
-                var writeRequests:[WriteRequest] = [writeRequest]
+                let writeRequest: WriteRequest = WriteRequest(characteristicUuid: request.characteristic.uuid.uuidString, value: flutterData)
+                let writeRequests:[WriteRequest] = [writeRequest]
                 self.bLECallback.onDidReceiveWrite(requests: writeRequests) { result in
                     switch result {
                     case .success:
@@ -146,6 +141,32 @@ class BlePlusPeripheralManager: NSObject, FlutterBlePlusPlugin, CBPeripheralMana
                 }
             }
         }
+    }
+    
+    func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest){
+        let readRequest: ReadRequest = ReadRequest(deviceId: request.central.identifier.uuidString, characteristicUuid: request.characteristic.uuid.uuidString)
+        self.bLECallback.onDidReceiveRead(request: readRequest, completion: { result in
+            switch result {
+            case .success(let readResponse):
+                if let flutterData = readResponse.data as? FlutterStandardTypedData {
+                    // Extract the raw data from FlutterStandardTypedData
+                    let swiftData = flutterData.data
+
+                    // Set the value of the read request with the data returned from Flutter
+                    request.value = swiftData
+
+                    // Respond to the central device with success
+                    peripheral.respond(to: request, withResult: .success)
+                } else {
+                    // If no data is available, respond with an error
+                    peripheral.respond(to: request, withResult: .unlikelyError)
+                }
+            case .failure(let error):
+                // Handle the PigeonError if there is a failure
+                print("Error: \(error.localizedDescription)")
+                peripheral.respond(to: request, withResult: .unlikelyError)
+            }
+        })
     }
     
 }

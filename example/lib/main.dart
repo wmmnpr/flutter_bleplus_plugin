@@ -7,6 +7,7 @@ import 'package:hex/hex.dart';
 
 class BLECallbackImpl extends BLECallback {
   late TextEditingController textEditingController;
+  int readCount = 0;
 
   BLECallbackImpl(this.textEditingController);
 
@@ -21,6 +22,12 @@ class BLECallbackImpl extends BLECallback {
       textEditingController.text += ";${wr.characteristicUuid}" + "${wr.value}";
     }
 
+  }
+
+  @override
+  ReadResponse onDidReceiveRead(ReadRequest request) {
+    String message = "hello world: ${readCount++}";
+    return ReadResponse(data: Uint8List.fromList(message.codeUnits ));
   }
 }
 
@@ -65,6 +72,11 @@ class _MyAppState extends State<MyApp> {
           properties: Uint8List.fromList([0x08]),
           permissions: Uint8List.fromList([0x02])
 
+      ),
+      BLECharacteristic(
+          uuid: 'ce060035-43e7-11e4-916c-0800200c9a66',
+          properties: Uint8List.fromList([0x02]),
+          permissions: Uint8List.fromList([0x01])
       )
     ];
     BLEService service = BLEService(

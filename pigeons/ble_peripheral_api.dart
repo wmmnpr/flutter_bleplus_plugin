@@ -62,11 +62,24 @@ class WriteRequest {
   WriteRequest(this.characteristicUuid, this.value);
 }
 
+class ReadRequest {
+  String deviceId;
+  String characteristicUuid;
+  ReadRequest(this.characteristicUuid, this.deviceId);
+}
+
+class ReadResponse {
+  Uint8List data;
+  ReadResponse(this.data);
+}
+
+
 
 @FlutterApi()
 abstract class BLECallback {
   void onBLEEvent(BLEEvent event);
   void onDidReceiveWrite(List<WriteRequest> requests);
+  ReadResponse onDidReceiveRead(ReadRequest request);
 }
 
 @HostApi()
