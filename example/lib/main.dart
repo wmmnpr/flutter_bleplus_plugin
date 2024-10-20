@@ -27,6 +27,7 @@ class BLECallbackImpl extends BLECallback {
   @override
   ReadResponse onDidReceiveRead(ReadRequest request) {
     String message = "hello world: ${readCount++}";
+    textEditingController.text += "$message;";
     return ReadResponse(data: Uint8List.fromList(message.codeUnits ));
   }
 }

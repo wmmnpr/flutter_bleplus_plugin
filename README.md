@@ -4,27 +4,27 @@ A Flutter plugin to support BLE functionality on macOS and on iOS.
 <br/>See the example folder for a quick overview of how-to use the plugin.
 
 ## Functionality overview
-| Functionality                                  | iOS | macOS | Android | Windows |
-|------------------------------------------------|-----|-------|---------|---------|
-| **Central Role (Scanning and Connecting)**     |     |       |         |         |
-| Scanning for Devices                           | ❌   | ❌     | ❌       | ❌       |
-| Connection Management                          | ❌   | ❌     | ❌       | ❌       |
-| Discover Services and Characteristics          | ❌   | ❌     | ❌       | ❌       |
-| Read/Write Characteristics                     | ❌   | ❌     | ❌       | ❌       |
-| Characteristic Notifications/Indications       | ❌   | ❌     | ❌       | ❌       |
-| RSSI Monitoring                                | ❌   | ❌     | ❌       | ❌       |
-| Handling Encryption and Bonding                | ❌   | ❌     | ❌       | ❌       |
-| **Peripheral Role (Advertising and Handling)** |     |       |         |         |
-| Advertising Services                           | ✅   | ✅     | ❌       | ❌       |
-| GATT Server Setup                              | ✅   | ✅     | ❌       | ❌       |
-| Responding to Read/Write Requests              | ✅   | ✅     | ❌       | ❌       |
-| Notify Characteristics from Peripheral         | ✅   | ✅     | ❌       | ❌       |
-| Handling Connections and Disconnections        | ❌   | ❌     | ❌       | ❌       |
-| Peripheral Configuration                       | ❌   | ❌     | ❌       | ❌       |
-| **General Utilities**                          |     |       |         |         |
-| Permission Management                          | ✅   | ✅     | ❌       | ❌       |
-| Error Handling and Event Monitoring            | ❌   | ❌     | ❌       | ❌       |
-| State Management                               | ❌   | ❌     | ❌       | ❌       |
+| Functionality                                  | iOS | macOS | Android | Windows | linux |
+|------------------------------------------------|-----|-------|---------|---------|-------|
+| **Central Role (Scanning and Connecting)**     |     |       |         |         |       |
+| Scanning for Devices                           | ❌   | ❌     | ❌       | ❌       | ❌     |
+| Connection Management                          | ❌   | ❌     | ❌       | ❌       | ❌     |
+| Discover Services and Characteristics          | ❌   | ❌     | ❌       | ❌       | ❌     |
+| Read/Write Characteristics                     | ❌   | ❌     | ❌       | ❌       | ❌     |
+| Characteristic Notifications/Indications       | ❌   | ❌     | ❌       | ❌       | ❌     |
+| RSSI Monitoring                                | ❌   | ❌     | ❌       | ❌       | ❌     |
+| Handling Encryption and Bonding                | ❌   | ❌     | ❌       | ❌       | ❌     |
+| **Peripheral Role (Advertising and Handling)** |     |       |         |         |       |
+| Advertising Services                           | ✅   | ✅     | ❌       | ❌       | ❌     |
+| GATT Server Setup                              | ✅   | ✅     | ❌       | ❌       | ❌     |
+| Responding to Read/Write Requests              | ✅   | ✅     | ❌       | ❌       | ❌     |
+| Notify Characteristics from Peripheral         | ✅   | ✅     | ❌       | ❌       | ❌     |
+| Handling Connections and Disconnections        | ❌   | ❌     | ❌       | ❌       | ❌     |
+| Peripheral Configuration                       | ❌   | ❌     | ❌       | ❌       | ❌     |
+| **General Utilities**                          |     |       |         |         |       |
+| Permission Management                          | ✅   | ✅     | ❌       | ❌       | ❌     |
+| Error Handling and Event Monitoring            | ❌   | ❌     | ❌       | ❌       | ❌     |
+| State Management                               | ❌   | ❌     | ❌       | ❌       | ❌     |
 
 # Development notes
 ## To fix XCode project also run:
