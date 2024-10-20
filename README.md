@@ -1,20 +1,33 @@
-# flutter_bleplus_plugin
+# Welcome to flutter_bleplus_plugin
+A Flutter plugin to support BLE functionality on macOS and on iOS.
+<br/>The project uses Pigeon for communication between the Flutter and the underlying platform.
+<br/>See the example folder for a quick overview of how-to use the plugin.
 
-A new Flutter plugin project.
+## Functionality overview
+| Functionality                                  | iOS | macOS | Android | Windows |
+|------------------------------------------------|-----|-------|---------|---------|
+| **Central Role (Scanning and Connecting)**     |     |       |         |         |
+| Scanning for Devices                           | ❌   | ❌     | ❌       | ❌       |
+| Connection Management                          | ❌   | ❌     | ❌       | ❌       |
+| Discover Services and Characteristics          | ❌   | ❌     | ❌       | ❌       |
+| Read/Write Characteristics                     | ❌   | ❌     | ❌       | ❌       |
+| Characteristic Notifications/Indications       | ❌   | ❌     | ❌       | ❌       |
+| RSSI Monitoring                                | ❌   | ❌     | ❌       | ❌       |
+| Handling Encryption and Bonding                | ❌   | ❌     | ❌       | ❌       |
+| **Peripheral Role (Advertising and Handling)** |     |       |         |         |
+| Advertising Services                           | ✅   | ✅     | ❌       | ❌       |
+| GATT Server Setup                              | ✅   | ✅     | ❌       | ❌       |
+| Responding to Read/Write Requests              | ✅   | ✅     | ❌       | ❌       |
+| Notify Characteristics from Peripheral         | ✅   | ✅     | ❌       | ❌       |
+| Handling Connections and Disconnections        | ❌   | ❌     | ❌       | ❌       |
+| Peripheral Configuration                       | ❌   | ❌     | ❌       | ❌       |
+| **General Utilities**                          |     |       |         |         |
+| Permission Management                          | ✅   | ✅     | ❌       | ❌       |
+| Error Handling and Event Monitoring            | ❌   | ❌     | ❌       | ❌       |
+| State Management                               | ❌   | ❌     | ❌       | ❌       |
 
-## Getting Started
-
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/to/develop-plugins),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-
-# To fix Xcode project also run:
+# Development notes
+## To fix XCode project also run:
 flutter pub get
 flutter clean
 flutter pub get
@@ -25,6 +38,8 @@ flutter build ios
 cd ios/     # or 'cd macos/'
 pod install
 
+## Core Bluetooth implementation notes
+### Characteristic Properties values
 typedef NS_OPTIONS(uint8_t, CBCharacteristicProperties) {
 CBCharacteristicPropertyBroadcast                    = 0x01,
 CBCharacteristicPropertyRead                         = 0x02,
@@ -38,6 +53,7 @@ CBCharacteristicPropertyNotifyEncryptionRequired     = 0x100,
 CBCharacteristicPropertyIndicateEncryptionRequired   = 0x200,
 };
 
+### Characteristic Permission values
 typedef NS_OPTIONS(uint8_t, CBAttributePermissions) {
 CBAttributePermissionsReadable                 = 0x01,
 CBAttributePermissionsWriteable                = 0x02,
