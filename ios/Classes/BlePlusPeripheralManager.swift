@@ -21,7 +21,13 @@ import CoreLocation
 
 class BlePlusPeripheralManager: NSObject, FlutterBlePlusPlugin, CBPeripheralManagerDelegate {
     func getPlatformVersion() throws -> String {
-        "don know!"
+        #if os(iOS)
+             return UIDevice.current.name
+        #elseif os(macOS)
+            return ProcessInfo.processInfo.operatingSystemVersionString
+        #else
+            return "Unsupported platform."
+        #endif
     }
     
     var binaryMessenger: FlutterBinaryMessenger;
@@ -50,23 +56,8 @@ class BlePlusPeripheralManager: NSObject, FlutterBlePlusPlugin, CBPeripheralMana
     }
     
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
-        notifyApi(eventType: "STATE_CHANGE")
-        switch peripheral.state {
-        case .poweredOn:
-            print("Bluetooth is powered on, ready to use")
-        case .poweredOff:
-            print("Bluetooth is powered off")
-        case .resetting:
-            print("Bluetooth is resetting")
-        case .unauthorized:
-            print("Bluetooth is unauthorized")
-        case .unsupported:
-            print("Bluetooth is unsupported")
-        case .unknown:
-            print("Bluetooth state is unknown")
-        @unknown default:
-            fatalError("Unhandled state: \(peripheral.state.rawValue)")
-        }
+        let v: CBManagerState = CBManagerState.poweredOn
+        notifyApi(eventType: String(describing: peripheral.state))
     }
     
     func getDeviceName() -> String {
